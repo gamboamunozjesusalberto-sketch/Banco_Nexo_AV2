@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments :: head('Solicitud')}"></head>
+<body>
+<nav th:replace="~{fragments :: menu}"></nav>
+<div th:replace="~{fragments :: mensajes}"></div>
+<main class="container py-4">
+<a th:href="@{/asesor}" class="small">&larr; Solicitudes</a>
+<div class="row g-4 mt-1">
+<div class="col-lg-5">
+    <div class="card"><div class="card-body p-4">
+        <div class="d-flex justify-content-between align-items-start">
+            <h5 class="mb-0" th:text="'Solicitud #' + ${s.id}"></h5>
+            <span th:replace="~{fragments :: estadoCredito(${s})}"></span>
+        </div>
+        <div th:replace="~{fragments :: lineaEstados(${s})}"></div>
+        <div class="fila d-flex justify-content-between border-bottom py-1"><span class="text-muted">Cliente</span><strong th:text="${s.clienteNombre}"></strong></div>
+        <div class="d-flex justify-content-between border-bottom py-1"><span class="text-muted">Monto</span><strong><span th:replace="~{fragments :: dinero(${s.monto})}"></span></strong></div>
+        <div class="d-flex justify-content-between border-bottom py-1"><span class="text-muted">Plazo</span><span th:text="${s.plazoMeses} + ' meses'"></span></div>
+        <div class="d-flex justify-content-between border-bottom py-1" th:if="${s.cuotaMensual != null}"><span class="text-muted">Cuota estimada</span>
+            <span><span th:replace="~{fragments :: dinero(${s.cuotaMensual})}"></span> <small class="text-muted" th:text="'(' + ${s.tasaAnual} + '% anual)'"></small></span></div>
+        <div class="d-flex justify-content-between border-bottom py-1"><span class="text-muted">Abonar en</span><span th:text="${s.cuentaDestinoNumero} ?: '-'"></span></div>
+        <div class="py-1 border-bottom"><span class="text-muted">Motivo:</span> <span th:text="${s.motivo}"></span></div>
+        <div class="py-1" th:if="${s.observaciones}"><span class="text-muted">Observaciones:</span> <span th:text="${s.observaciones}"></span></div>
+
+        <!-- Patron State: los botones dependen de lo que el estado actual permite -->
+        <form th:if="${s.pendiente}" class="mt-3" th:action="@{/asesor/solicitudes/{id}/evaluar(id=${s.id})}" method="post">
+            <button type="submit" class="btn btn-primary w-100">Iniciar evaluacion</button>
+            <p class="small text-muted mt-2 mb-0">Primero se pasa a "En evaluacion": asi el cliente sabe que alguien ya la esta revisando.</p>
+        </form>
+        <form th:if="${s.admiteDecision}" class="mt-3" th:action="@{/asesor/solicitudes/{id}/resolver(id=${s.id})}" method="post">
+            <label class="form-label">Observaciones (obligatorias para rechazar)</label>
+            <textarea name="observaciones" class="form-control mb-2" rows="3" maxlength="250"></textarea>
+            <div class="d-flex gap-2">
+                <button type="submit" name="decision" value="APROBAR" class="btn btn-primary flex-fill"
+                        onclick="return confirm('Se aprobara y se desembolsara el dinero en la cuenta del cliente. ¿Continuar?')">Aprobar y desembolsar</button>
+                <button type="submit" name="decision" value="RECHAZAR" class="btn btn-outline-danger flex-fill">Rechazar</button>
+            </div>
+        </form>
+    </div></div>
+</div>
+<div class="col-lg-7">
+    <h5>Cuentas del cliente</h5>
+    <div class="tabla-nexo mb-2"><table class="table table-sm mb-0">
+        <thead><tr><th>Cuenta</th><th>Tipo</th><th class="text-end">Saldo</th></tr></thead>
+        <tbody>
+        <tr th:each="c : ${historial.cuentas}"><td th:text="${c.numero}"></td><td th:text="${c.tipo}"></td>
+            <td class="text-end"><span th:replace="~{fragments :: dinero(${c.saldo})}"></span></td></tr>
+        <tr th:if="${#lists.isEmpty(historial.cuentas)}"><td colspan="3" class="text-muted text-center">Sin cuentas</td></tr>
+        </tbody>
+    </table></div>
+    <a th:href="@{/asesor/clientes/{id}(id=${s.clienteId})}">Ver historial completo del cliente &rarr;</a>
+</div>
+</div>
+</main>
+<th:block th:replace="~{fragments :: scripts}"></th:block>
+</body>
+</html>

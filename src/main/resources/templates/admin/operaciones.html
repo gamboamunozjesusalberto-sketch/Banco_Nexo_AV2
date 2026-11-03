@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments :: head('Auditar operaciones')}"></head>
+<body>
+<nav th:replace="~{fragments :: menu}"></nav>
+<div th:replace="~{fragments :: mensajes}"></div>
+<main class="container py-4">
+<h2 class="mb-1">Auditar operaciones de caja</h2>
+<p class="text-muted">Cada deposito o retiro de ventanilla es un <strong>comando</strong> guardado. Si el cajero se equivoco, se extorna:
+    el sistema registra el movimiento inverso (el dinero en un banco no se borra).</p>
+<div class="d-flex justify-content-end mb-2">
+    <input type="search" class="form-control form-control-sm" style="max-width:240px" placeholder="Buscar cuenta, cliente o cajero..." data-filtrar="#tablaOps">
+</div>
+<div class="tabla-nexo"><div class="table-responsive">
+<table class="table align-middle" id="tablaOps">
+    <thead><tr><th>#</th><th>Fecha</th><th>Operacion</th><th>Cuenta</th><th class="text-end">Monto</th><th>Cajero</th><th>Estado</th><th class="text-end">Accion</th></tr></thead>
+    <tbody>
+    <tr th:each="o : ${operaciones}">
+        <td th:text="${o.id}"></td>
+        <td class="text-nowrap small" th:text="${#temporals.format(o.fecha, 'dd/MM/yyyy HH:mm')}"></td>
+        <td><span class="badge" th:classappend="${o.comando.esIngreso()} ? 'ingreso' : 'egreso'" th:text="${o.comando.nombre}"></span></td>
+        <td class="small"><div th:text="${o.cuentaNumero}"></div><div class="text-muted" th:text="${o.clienteNombre}"></div></td>
+        <td class="text-end"><span th:replace="~{fragments :: dinero(${o.monto})}"></span></td>
+        <td th:text="${o.cajero}"></td>
+        <td>
+            <span class="badge ingreso" th:if="${o.extornable}">Ejecutada</span>
+            <span th:unless="${o.extornable}">
+                <span class="badge bg-secondary">Extornada</span>
+                <div class="small text-muted" th:text="${o.extornadoPor} + ': ' + ${o.motivoExtorno}"></div>
+            </span>
+        </td>
+        <td class="text-end">
+            <button th:if="${o.extornable}" type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal"
+                    th:attr="data-bs-target='#extornar' + ${o.id}">Extornar</button>
+            <div th:if="${o.extornable}" class="modal fade text-start" th:id="'extornar' + ${o.id}" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+                    <form th:action="@{/admin/operaciones/{id}/extornar(id=${o.id})}" method="post">
+                        <div class="modal-header border-0"><h5 class="modal-title" th:text="'Extornar operacion #' + ${o.id}"></h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                        <div class="modal-body">
+                            <p class="small">Se registrara un <strong th:text="${o.comando.name() == 'DEPOSITO'} ? 'retiro' : 'deposito'"></strong> por
+                                <strong th:text="'S/ ' + ${#numbers.formatDecimal(o.monto, 1, 'COMMA', 2, 'POINT')}"></strong> en la cuenta
+                                <span th:text="${o.cuentaNumero}"></span>.</p>
+                            <label class="form-label">Motivo del extorno</label>
+                            <input type="text" name="motivo" class="form-control" maxlength="150" placeholder="Ej. El cajero digito un monto equivocado" required>
+                        </div>
+                        <div class="modal-footer border-0">
+                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-danger">Extornar</button>
+                        </div>
+                    </form>
+                </div></div>
+            </div>
+        </td>
+    </tr>
+    <tr th:if="${#lists.isEmpty(operaciones)}"><td colspan="8" class="text-center text-muted py-4">Aun no hay operaciones de caja</td></tr>
+    </tbody>
+</table>
+</div></div>
+</main>
+<th:block th:replace="~{fragments :: scripts}"></th:block>
+</body>
+</html>

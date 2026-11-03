@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments :: head('Historial del cliente')}"></head>
+<body>
+<nav th:replace="~{fragments :: menu}"></nav>
+<div th:replace="~{fragments :: mensajes}"></div>
+<main class="container py-4">
+<a th:href="@{/asesor/clientes}" class="small">&larr; Clientes</a>
+<h2 class="mb-0 mt-2" th:text="${historial.cliente.nombre}"></h2>
+<p class="text-muted">DNI <span th:text="${historial.cliente.dni}"></span> &middot; <span th:text="${historial.cliente.correo}"></span></p>
+<div class="row g-4">
+<div class="col-lg-5">
+    <h5>Cuentas</h5>
+    <div class="tabla-nexo mb-4"><table class="table table-sm mb-0">
+        <thead><tr><th>Numero</th><th>Tipo</th><th class="text-end">Saldo</th></tr></thead>
+        <tbody>
+        <tr th:each="c : ${historial.cuentas}"><td th:text="${c.numero}"></td><td th:text="${c.tipo}"></td>
+            <td class="text-end"><span th:replace="~{fragments :: dinero(${c.saldo})}"></span></td></tr>
+        <tr th:if="${#lists.isEmpty(historial.cuentas)}"><td colspan="3" class="text-muted text-center">Sin cuentas</td></tr>
+        </tbody>
+    </table></div>
+    <h5>Solicitudes de credito</h5>
+    <div class="tabla-nexo"><table class="table table-sm mb-0 align-middle">
+        <thead><tr><th>Fecha</th><th class="text-end">Monto</th><th>Estado</th><th></th></tr></thead>
+        <tbody>
+        <tr th:each="s : ${historial.solicitudes}">
+            <td th:text="${#temporals.format(s.fechaSolicitud, 'dd/MM/yyyy')}"></td>
+            <td class="text-end"><span th:replace="~{fragments :: dinero(${s.monto})}"></span></td>
+            <td><span th:replace="~{fragments :: estadoCredito(${s})}"></span></td>
+            <td><a th:href="@{/asesor/solicitudes/{id}(id=${s.id})}">Abrir</a></td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(historial.solicitudes)}"><td colspan="4" class="text-muted text-center">Sin solicitudes</td></tr>
+        </tbody>
+    </table></div>
+</div>
+<div class="col-lg-7">
+    <h5>Ultimos movimientos</h5>
+    <div class="tabla-nexo"><div class="table-responsive"><table class="table table-sm mb-0">
+        <thead><tr><th>Fecha</th><th>Cuenta</th><th>Tipo</th><th class="text-end">Monto</th></tr></thead>
+        <tbody>
+        <tr th:each="m : ${historial.movimientos}">
+            <td class="text-nowrap" th:text="${#temporals.format(m.fecha, 'dd/MM/yyyy HH:mm')}"></td>
+            <td th:text="${m.cuentaNumero}"></td>
+            <td><span th:replace="~{fragments :: tipoMov(${m})}"></span></td>
+            <td class="text-end"><span th:replace="~{fragments :: dinero(${m.monto})}"></span></td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(historial.movimientos)}"><td colspan="4" class="text-muted text-center">Sin movimientos</td></tr>
+        </tbody>
+    </table></div></div>
+</div>
+</div>
+</main>
+<th:block th:replace="~{fragments :: scripts}"></th:block>
+</body>
+</html>

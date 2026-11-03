@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments :: head('Cuentas')}"></head>
+<body>
+<nav th:replace="~{fragments :: menu}"></nav>
+<div th:replace="~{fragments :: mensajes}"></div>
+<main class="container py-4">
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <h2 class="mb-0">Cuentas</h2>
+    <div class="d-flex gap-2">
+        <input type="search" class="form-control" placeholder="Buscar..." data-filtrar="#tablaCuentas">
+        <a class="btn btn-primary text-nowrap" th:href="@{/cajero/cuentas/nueva}">Abrir cuenta</a>
+    </div>
+</div>
+<div class="tabla-nexo"><div class="table-responsive">
+<table class="table align-middle" id="tablaCuentas">
+    <thead><tr><th>Numero</th><th>Tipo</th><th>Titular</th><th class="text-end">Saldo</th><th></th></tr></thead>
+    <tbody>
+    <tr th:each="c : ${cuentas}">
+        <td class="fw-semibold" th:text="${c.numero}"></td><td th:text="${c.tipo}"></td><td th:text="${c.clienteNombre}"></td>
+        <td class="text-end"><span th:replace="~{fragments :: dinero(${c.saldo})}"></span></td>
+        <td class="text-end"><a class="btn btn-sm btn-outline-primary" th:href="@{/cajero/cuentas/{id}(id=${c.id})}">Ver detalle</a></td>
+    </tr>
+    <tr th:if="${#lists.isEmpty(cuentas)}"><td colspan="5" class="text-center text-muted py-4">Aun no hay cuentas abiertas</td></tr>
+    </tbody>
+</table>
+</div></div>
+</main>
+<th:block th:replace="~{fragments :: scripts}"></th:block>
+</body>
+</html>

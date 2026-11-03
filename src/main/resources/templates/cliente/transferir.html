@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments :: head('Transferir')}"></head>
+<body>
+<nav th:replace="~{fragments :: menu}"></nav>
+<div th:replace="~{fragments :: mensajes}"></div>
+<main class="container py-4">
+<div class="mx-auto" style="max-width: 560px;">
+<h2 class="mb-1">Transferir</h2>
+<p class="text-muted">A cualquier cuenta de Banco NEXO, al instante.</p>
+<div class="alert alert-warning" th:if="${#lists.isEmpty(cuentas)}">No tienes cuentas para transferir.</div>
+<div class="card"><div class="card-body p-4">
+<form th:action="@{/cliente/transferir}" method="post" data-confirmar th:attr="data-umbral=${umbral}">
+    <div class="mb-3"><label class="form-label">Desde</label>
+        <select name="cuentaOrigenId" class="form-select" data-resumen="Desde" required>
+            <option th:each="c : ${cuentas}" th:value="${c.id}"
+                    th:text="${c.numero} + ' - S/ ' + ${#numbers.formatDecimal(c.saldo, 1, 'COMMA', 2, 'POINT')}"></option>
+        </select></div>
+    <div class="mb-3"><label class="form-label">Cuenta destino</label>
+        <input type="text" name="cuentaDestino" class="form-control" placeholder="NX-1000000001" data-resumen="Para la cuenta" required></div>
+    <div class="mb-3"><label class="form-label">Monto</label>
+        <div class="input-group input-group-lg"><span class="input-group-text">S/</span>
+            <input type="number" name="monto" class="form-control" min="0.01" step="0.01" data-resumen="Monto" required></div></div>
+    <div class="mb-3"><label class="form-label">Descripcion <span class="text-muted small">(opcional)</span></label>
+        <input type="text" name="descripcion" class="form-control" maxlength="60" placeholder="Ej. Pago del almuerzo" data-resumen="Descripcion"></div>
+    <div class="bloque-confirmacion d-none mb-3">
+        <div class="aviso-seguridad mb-2"><svg class="ico"><use th:href="@{/img/iconos.svg#candado}"></use></svg> <strong>Monto alto.</strong> Desde
+            <span th:replace="~{fragments :: dinero(${umbral})}"></span> te pedimos tu clave para confirmar que eres tu.</div>
+        <input type="password" name="claveConfirmacion" class="form-control" placeholder="Escribe tu clave" autocomplete="current-password">
+    </div>
+    <button type="submit" class="btn btn-primary btn-lg w-100">Continuar</button>
+</form>
+</div></div>
+</div>
+</main>
+<div th:replace="~{fragments :: modalConfirmar}"></div>
+<th:block th:replace="~{fragments :: scripts}"></th:block>
+</body>
+</html>

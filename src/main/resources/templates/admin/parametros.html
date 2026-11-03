@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments :: head('Parametros')}"></head>
+<body>
+<nav th:replace="~{fragments :: menu}"></nav>
+<div th:replace="~{fragments :: mensajes}"></div>
+<main class="container py-4">
+<h2 class="mb-1">Parametros de riesgo</h2>
+<p class="text-muted">Cada cambio guarda antes una "foto" de la configuracion (patron <strong>Memento</strong>). Si alguien se equivoca, se restaura con un clic.</p>
+<div class="row g-4">
+<div class="col-lg-7">
+    <div class="tabla-nexo"><div class="table-responsive">
+    <table class="table align-middle">
+        <thead><tr><th>Parametro</th><th style="width: 210px;">Valor</th></tr></thead>
+        <tbody>
+        <tr th:each="p : ${parametros}">
+            <td><div class="fw-semibold small" th:text="${p.clave}"></div><div class="small text-muted" th:text="${p.descripcion}"></div></td>
+            <td>
+                <form class="d-flex gap-1" th:action="@{/admin/parametros}" method="post">
+                    <input type="hidden" name="clave" th:value="${p.clave}">
+                    <input type="number" name="valor" class="form-control form-control-sm" min="0" step="0.01" th:value="${p.valor}" required>
+                    <button type="submit" class="btn btn-sm btn-primary">Guardar</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    </div></div>
+</div>
+<div class="col-lg-5">
+    <div class="card"><div class="card-body">
+        <h5 class="mb-3"><svg class="ico"><use th:href="@{/img/iconos.svg#reloj}"></use></svg> Historial de versiones</h5>
+        <div class="border-start border-3 ps-3 pb-3 position-relative" style="border-color: var(--acento) !important;" th:each="v : ${versiones}">
+            <div class="d-flex justify-content-between">
+                <strong th:text="'Version #' + ${v.id}"></strong>
+                <small class="text-muted" th:text="${#temporals.format(v.fecha, 'dd/MM/yyyy HH:mm')}"></small>
+            </div>
+            <div class="small" th:text="${v.descripcion}"></div>
+            <div class="small text-muted" th:text="'Guardada por ' + ${v.usuario}"></div>
+            <details class="small mt-1">
+                <summary class="text-nexo">Ver valores</summary>
+                <div th:each="e : ${v.vista}" class="d-flex justify-content-between"><span th:text="${e.key}"></span><strong th:text="${e.value}"></strong></div>
+            </details>
+            <form class="mt-1" th:action="@{/admin/parametros/restaurar/{id}(id=${v.id})}" method="post"
+                  onsubmit="return confirm('Se volvera a esta configuracion. La actual tambien quedara guardada. ¿Continuar?')">
+                <button type="submit" class="btn btn-sm btn-outline-primary">Restaurar esta version</button>
+            </form>
+        </div>
+        <p class="text-muted small mb-0" th:if="${#lists.isEmpty(versiones)}">Aun no hay versiones guardadas. Se crea una cada vez que cambias un parametro.</p>
+    </div></div>
+</div>
+</div>
+</main>
+<th:block th:replace="~{fragments :: scripts}"></th:block>
+</body>
+</html>

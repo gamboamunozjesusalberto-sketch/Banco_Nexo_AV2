@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments :: head('Comprobante')}"></head>
+<body>
+<nav th:replace="~{fragments :: menu}"></nav>
+<div th:replace="~{fragments :: mensajes}"></div>
+<main class="container py-4">
+<div class="comprobante">
+    <div class="cabecera">
+        <img th:src="@{/img/logo-nexo-blanco.png}" alt="Logo Banco NEXO">
+        <div class="fw-bold mt-1">Banco NEXO</div>
+        <div class="small" style="opacity:.8">Comprobante de operacion</div>
+    </div>
+    <div class="text-center py-3">
+        <div class="text-muted small" th:text="${t.tipo.nombre}"></div>
+        <div class="fs-2 fw-bold"><span th:replace="~{fragments :: dinero(${t.monto})}"></span></div>
+    </div>
+    <div class="fila"><span class="text-muted">Comprobante</span><strong th:text="${t.numeroComprobante}"></strong></div>
+    <div class="fila"><span class="text-muted">Fecha</span><span th:text="${#temporals.format(t.fecha, 'dd/MM/yyyy HH:mm:ss')}"></span></div>
+    <div class="fila"><span class="text-muted">Cuenta</span><span th:text="${t.cuentaNumero}"></span></div>
+    <div class="fila"><span class="text-muted">Titular</span><span th:text="${t.clienteNombre}"></span></div>
+    <div class="fila" th:if="${t.descripcion}"><span class="text-muted">Detalle</span><span class="text-end ms-3" th:text="${t.descripcion}"></span></div>
+    <div class="fila"><span class="text-muted">Saldo resultante</span><span th:replace="~{fragments :: dinero(${t.saldoResultante})}"></span></div>
+    <div class="p-3 d-flex gap-2 no-imprimir">
+        <button type="button" class="btn btn-primary" onclick="window.print()">Imprimir</button>
+        <a class="btn btn-outline-primary" th:href="@{/cajero/operaciones}">Nueva operacion</a>
+        <a class="btn btn-light" th:href="@{/cajero}">Inicio</a>
+    </div>
+</div>
+</main>
+<th:block th:replace="~{fragments :: scripts}"></th:block>
+</body>
+</html>

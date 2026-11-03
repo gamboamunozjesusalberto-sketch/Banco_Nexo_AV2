@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments :: head('Solicitudes')}"></head>
+<body>
+<nav th:replace="~{fragments :: menu}"></nav>
+<div th:replace="~{fragments :: mensajes}"></div>
+<main class="container py-4">
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <h2 class="mb-0">Solicitudes de credito</h2>
+    <input type="search" class="form-control" style="max-width:260px" placeholder="Buscar cliente o estado..." data-filtrar="#tablaSol">
+</div>
+<div class="tabla-nexo"><div class="table-responsive">
+<table class="table align-middle" id="tablaSol">
+    <thead><tr><th>Fecha</th><th>Cliente</th><th class="text-end">Monto</th><th>Plazo</th><th>Estado</th><th></th></tr></thead>
+    <tbody>
+    <tr th:each="s : ${solicitudes}">
+        <td class="text-nowrap" th:text="${#temporals.format(s.fechaSolicitud, 'dd/MM/yyyy HH:mm')}"></td>
+        <td class="fw-semibold" th:text="${s.clienteNombre}"></td>
+        <td class="text-end"><span th:replace="~{fragments :: dinero(${s.monto})}"></span></td>
+        <td th:text="${s.plazoMeses} + ' meses'"></td>
+        <td><span th:replace="~{fragments :: estadoCredito(${s})}"></span></td>
+        <td class="text-end"><a class="btn btn-sm" th:classappend="${s.finalizada} ? 'btn-light' : 'btn-primary'"
+            th:href="@{/asesor/solicitudes/{id}(id=${s.id})}" th:text="${s.finalizada} ? 'Ver' : 'Atender'"></a></td>
+    </tr>
+    <tr th:if="${#lists.isEmpty(solicitudes)}"><td colspan="6" class="text-center text-muted py-4">No hay solicitudes</td></tr>
+    </tbody>
+</table>
+</div></div>
+</main>
+<th:block th:replace="~{fragments :: scripts}"></th:block>
+</body>
+</html>

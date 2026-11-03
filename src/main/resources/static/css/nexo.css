@@ -1,0 +1,189 @@
+/* ==========================================================================
+   Banco NEXO - hoja de estilos propia (se carga DESPUES de Bootstrap)
+   Un color dominante (verde NEXO) + un acento (lima), como hacen BCP (azul)
+   o Interbank (verde): la marca se reconoce por un solo color.
+   ========================================================================== */
+:root {
+    --nexo: #0B7A4B;
+    --nexo-oscuro: #075C38;
+    --nexo-claro: #E8F5EE;
+    --acento: #9BE15D;
+    --acento-suave: #F0FAE6;
+    --tinta: #17241D;
+    --gris: #6B7A72;
+    --borde: #E2E8E4;
+    --fondo: #F5F7F6;
+    --peligro: #C8372D;
+    --aviso: #E8A317;
+
+    --bs-primary: var(--nexo);
+    --bs-primary-rgb: 11, 122, 75;
+    --bs-link-color: var(--nexo);
+    --bs-link-color-rgb: 11, 122, 75;
+    --bs-link-hover-color: var(--nexo-oscuro);
+    --bs-body-color: var(--tinta);
+    --bs-body-bg: var(--fondo);
+    --bs-border-radius: .65rem;
+    --bs-font-sans-serif: "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+body { background: var(--fondo); color: var(--tinta); }
+main { padding-bottom: 4rem; }
+h1, h2, h3, h4, h5 { font-weight: 700; letter-spacing: -.01em; }
+.text-muted { color: var(--gris) !important; }
+.text-nexo { color: var(--nexo) !important; }
+
+/* ---------- botones ---------- */
+.btn-primary {
+    --bs-btn-bg: var(--nexo); --bs-btn-border-color: var(--nexo);
+    --bs-btn-hover-bg: var(--nexo-oscuro); --bs-btn-hover-border-color: var(--nexo-oscuro);
+    --bs-btn-active-bg: var(--nexo-oscuro); --bs-btn-active-border-color: var(--nexo-oscuro);
+    --bs-btn-disabled-bg: var(--nexo); --bs-btn-disabled-border-color: var(--nexo);
+    font-weight: 600;
+}
+.btn-outline-primary {
+    --bs-btn-color: var(--nexo); --bs-btn-border-color: var(--nexo);
+    --bs-btn-hover-bg: var(--nexo); --bs-btn-hover-border-color: var(--nexo);
+    --bs-btn-active-bg: var(--nexo-oscuro); --bs-btn-active-border-color: var(--nexo-oscuro);
+    font-weight: 600;
+}
+.btn-acento { background: var(--acento); color: var(--tinta); font-weight: 700; border: 0; }
+.btn-acento:hover { background: #8AD24B; color: var(--tinta); }
+.btn { transition: transform .08s ease, background-color .15s ease; }
+.btn:active { transform: scale(.97); }
+
+/* ---------- barra superior ---------- */
+.nexo-nav { background: var(--nexo); box-shadow: 0 2px 10px rgba(7, 92, 56, .25); }
+.nexo-nav .navbar-brand { display: flex; align-items: center; gap: .55rem; font-weight: 700; }
+.nexo-nav .navbar-brand img { height: 30px; }
+@media (max-width: 420px) { .nexo-nav .navbar-brand span { display: none; } }
+.nexo-nav .nav-link { color: rgba(255, 255, 255, .85); font-weight: 500; border-radius: .5rem; padding: .45rem .8rem !important; }
+.nexo-nav .nav-link:hover, .nexo-nav .nav-link.activo { color: #fff; background: rgba(255, 255, 255, .12); }
+.nexo-nav .chip-usuario { background: #fff; color: var(--nexo); font-weight: 700; border-radius: 2rem; padding: .3rem .85rem; font-size: .9rem; }
+.campana { position: relative; color: #fff; font-size: 1.25rem; text-decoration: none; padding: 0 .4rem; }
+.campana .contador { position: absolute; top: -4px; right: -6px; background: var(--acento); color: var(--tinta);
+    font-size: .7rem; font-weight: 800; border-radius: 1rem; padding: 1px 6px; }
+
+/* ---------- tarjetas ---------- */
+.card { border: 1px solid var(--borde); border-radius: 1rem; box-shadow: 0 1px 3px rgba(23, 36, 29, .05); }
+.card-hover { transition: transform .15s ease, box-shadow .15s ease; }
+.card-hover:hover { transform: translateY(-3px); box-shadow: 0 8px 22px rgba(23, 36, 29, .10); }
+.tarjeta-saldo { background: linear-gradient(135deg, var(--nexo) 0%, var(--nexo-oscuro) 100%); color: #fff; border: 0; position: relative; overflow: hidden; }
+.tarjeta-saldo::after { content: ""; position: absolute; right: -40px; top: -40px; width: 160px; height: 160px; border-radius: 50%;
+    background: rgba(155, 225, 93, .18); }
+.tarjeta-saldo .etiqueta { color: rgba(255, 255, 255, .75); font-size: .85rem; }
+.tarjeta-saldo .monto { font-size: 2rem; font-weight: 800; letter-spacing: -.02em; }
+.tarjeta-saldo .btn-light { color: var(--nexo); font-weight: 700; }
+.kpi { border-left: 4px solid var(--nexo); }
+.kpi .valor { font-size: 1.6rem; font-weight: 800; }
+.kpi.acento { border-left-color: var(--acento); }
+.kpi.peligro { border-left-color: var(--peligro); }
+
+/* ---------- accesos rapidos ---------- */
+.acceso { display: flex; flex-direction: column; align-items: center; gap: .4rem; padding: 1rem .5rem; text-decoration: none;
+    color: var(--tinta); background: #fff; border: 1px solid var(--borde); border-radius: 1rem; font-weight: 600; font-size: .92rem;
+    transition: all .15s ease; }
+.acceso .icono { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: var(--nexo-claro);
+    color: var(--nexo); font-size: 1.25rem; }
+.acceso:hover { border-color: var(--nexo); color: var(--nexo); transform: translateY(-2px); }
+
+/* ---------- tablas y badges ---------- */
+.table { --bs-table-bg: #fff; }
+.tabla-nexo { background: #fff; border-radius: 1rem; overflow: hidden; border: 1px solid var(--borde); }
+.tabla-nexo .table { margin-bottom: 0; }
+.tabla-nexo thead th { background: var(--nexo-claro); color: var(--nexo-oscuro); font-size: .8rem; text-transform: uppercase;
+    letter-spacing: .04em; border-bottom: 0; }
+.badge { font-weight: 600; letter-spacing: .02em; }
+.badge.ingreso { background: var(--acento-suave); color: var(--nexo-oscuro); }
+.badge.egreso { background: #FDECEA; color: var(--peligro); }
+.estado { font-weight: 700; border-radius: 2rem; padding: .3em .8em; font-size: .78rem; }
+.estado-PENDIENTE { background: #FFF4D6; color: #8A5A00; }
+.estado-EN_EVALUACION { background: #E3EEFF; color: #1F4FA8; }
+.estado-APROBADA { background: var(--acento-suave); color: var(--nexo-oscuro); }
+.estado-DESEMBOLSADA { background: var(--nexo); color: #fff; }
+.estado-RECHAZADA { background: #FDECEA; color: var(--peligro); }
+.nivel-ALTO { background: var(--peligro); color: #fff; }
+.nivel-MEDIO { background: #FFF4D6; color: #8A5A00; }
+
+/* ---------- linea de tiempo del credito (patron State) ---------- */
+.linea-estados { display: flex; gap: .3rem; margin: .5rem 0 1rem; }
+.linea-estados .paso { flex: 1; text-align: center; font-size: .72rem; color: var(--gris); }
+.linea-estados .paso::before { content: ""; display: block; height: 6px; border-radius: 3px; background: var(--borde); margin-bottom: .3rem; }
+.linea-estados .paso.hecho::before { background: var(--nexo); }
+.linea-estados .paso.actual { color: var(--nexo); font-weight: 700; }
+.linea-estados .paso.rechazo::before { background: var(--peligro); }
+
+/* ---------- graficos de barras (reportes) ---------- */
+.barra { height: 12px; background: var(--nexo-claro); border-radius: 6px; overflow: hidden; }
+.barra > span { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--nexo), var(--acento));
+    border-radius: 6px; transition: width .9s cubic-bezier(.2, .8, .2, 1); }
+.columnas { display: flex; align-items: flex-end; gap: .6rem; height: 180px; padding-top: 1rem; }
+.columnas .col-dia { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; }
+.columnas .col-dia .pilar { width: 100%; max-width: 46px; background: var(--nexo); border-radius: 6px 6px 0 0; height: 0;
+    transition: height .9s cubic-bezier(.2, .8, .2, 1); }
+.columnas .col-dia:hover .pilar { background: var(--acento); }
+.columnas .col-dia small { margin-top: .3rem; color: var(--gris); font-size: .72rem; }
+
+/* ---------- login / registro ---------- */
+.pantalla-acceso { min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr; }
+.panel-marca { background: var(--nexo); color: #fff; padding: 3rem; display: flex; flex-direction: column; justify-content: space-between;
+    position: relative; overflow: hidden; }
+.panel-marca::before { content: ""; position: absolute; width: 420px; height: 420px; border-radius: 50%; right: -140px; bottom: -140px;
+    border: 60px solid rgba(155, 225, 93, .15); }
+.panel-marca h1 { font-size: 2.4rem; line-height: 1.15; max-width: 420px; }
+.panel-marca .punto { color: var(--acento); }
+.panel-form { display: flex; align-items: center; justify-content: center; padding: 2rem 1rem; }
+.panel-form .caja { width: 100%; max-width: 400px; }
+@media (max-width: 860px) {
+    .pantalla-acceso { grid-template-columns: 1fr; }
+    .panel-marca { padding: 1.5rem; }
+    .panel-marca h1 { font-size: 1.5rem; }
+    .panel-marca .oculto-movil { display: none; }
+}
+
+/* ---------- formularios ---------- */
+.form-control:focus, .form-select:focus { border-color: var(--nexo); box-shadow: 0 0 0 .2rem rgba(11, 122, 75, .15); }
+.form-check-input:checked { background-color: var(--nexo); border-color: var(--nexo); }
+.medidor-clave { height: 5px; border-radius: 3px; background: var(--borde); overflow: hidden; }
+.medidor-clave > span { display: block; height: 100%; width: 0; transition: width .2s ease, background-color .2s ease; }
+.aviso-seguridad { background: var(--acento-suave); border-left: 4px solid var(--acento); border-radius: .6rem; padding: .7rem 1rem; font-size: .9rem; }
+.clave-temporal { font-family: ui-monospace, Consolas, monospace; font-size: 1.4rem; letter-spacing: .12em; background: #fff;
+    border: 2px dashed var(--nexo); border-radius: .6rem; padding: .4rem 1rem; display: inline-block; }
+
+/* ---------- toasts ---------- */
+.zona-toasts { position: fixed; top: 76px; right: 16px; z-index: 1080; max-width: 380px; }
+.toast-nexo { border: 0; border-left: 5px solid var(--nexo); box-shadow: 0 10px 30px rgba(0, 0, 0, .15); }
+.toast-nexo.error { border-left-color: var(--peligro); }
+
+/* ---------- saldo oculto ---------- */
+.saldo-oculto .valor-saldo { filter: blur(9px); user-select: none; }
+.valor-saldo { transition: filter .2s ease; }
+
+/* ---------- comprobante ---------- */
+.comprobante { max-width: 480px; margin: 0 auto; background: #fff; border-radius: 1rem; border: 1px solid var(--borde); overflow: hidden; }
+.comprobante .cabecera { background: var(--nexo); color: #fff; padding: 1.2rem; text-align: center; }
+.comprobante .cabecera img { height: 42px; }
+.comprobante .fila { display: flex; justify-content: space-between; padding: .45rem 1.2rem; border-bottom: 1px dashed var(--borde); font-size: .93rem; }
+@media print {
+    .nexo-nav, .no-imprimir, .zona-toasts { display: none !important; }
+    body { background: #fff; }
+}
+
+.pie-nexo { color: var(--gris); font-size: .8rem; text-align: center; padding: 2rem 0 1rem; }
+.form-range::-webkit-slider-thumb { background: var(--nexo); }
+.form-range::-moz-range-thumb { background: var(--nexo); }
+.form-range:focus::-webkit-slider-thumb { box-shadow: 0 0 0 .25rem rgba(11, 122, 75, .2); }
+
+/* ---------- iconos propios (img/iconos.svg) ---------- */
+.ico { width: 1.15em; height: 1.15em; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round;
+    stroke-linejoin: round; vertical-align: -.2em; flex-shrink: 0; }
+.acceso .icono .ico { width: 22px; height: 22px; transition: transform .25s cubic-bezier(.3, 1.6, .5, 1); }
+.acceso .icono { transition: background-color .2s ease, color .2s ease; }
+.acceso:hover .icono { background: var(--nexo); color: #fff; }
+.acceso:hover .icono .ico { transform: scale(1.15) rotate(-6deg); }
+.campana .ico { width: 22px; height: 22px; }
+.campana:hover .ico { animation: timbre .6s ease; }
+@keyframes timbre { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(14deg); } 50% { transform: rotate(-12deg); } 75% { transform: rotate(6deg); } }
+.icono-grande { width: 56px; height: 56px; border-radius: 50%; display: inline-grid; place-items: center; background: var(--nexo-claro); color: var(--nexo); }
+.icono-grande .ico { width: 28px; height: 28px; }
+.icono-grande.peligro { background: #FDECEA; color: var(--peligro); }

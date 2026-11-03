@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments :: head('Detalle de cuenta')}"></head>
+<body>
+<nav th:replace="~{fragments :: menu}"></nav>
+<div th:replace="~{fragments :: mensajes}"></div>
+<main class="container py-4">
+<a th:href="@{/cajero/cuentas}" class="small">&larr; Cuentas</a>
+<div class="card tarjeta-saldo my-3"><div class="card-body p-4">
+    <div class="etiqueta" th:text="${cuenta.tipo} + ' - abierta el ' + ${#temporals.format(cuenta.fechaApertura, 'dd/MM/yyyy')}"></div>
+    <h4 class="mb-1" th:text="${cuenta.numero}"></h4>
+    <div class="mb-2">Titular: <strong th:text="${cuenta.clienteNombre}"></strong></div>
+    <div class="monto"><span th:replace="~{fragments :: dinero(${cuenta.saldo})}"></span></div>
+    <div class="etiqueta mb-3">Disponible para retirar: <span th:text="'S/ ' + ${#numbers.formatDecimal(cuenta.saldoDisponible, 1, 'COMMA', 2, 'POINT')}"></span></div>
+    <a class="btn btn-light btn-sm" th:href="@{/cajero/operaciones}">Nueva operacion</a>
+</div></div>
+<h5>Historial de movimientos</h5>
+<div class="tabla-nexo"><div class="table-responsive">
+<table class="table align-middle">
+    <thead><tr><th>Fecha</th><th>Tipo</th><th>Descripcion</th><th class="text-end">Monto</th><th class="text-end">Saldo</th><th></th></tr></thead>
+    <tbody>
+    <tr th:each="m : ${movimientos}">
+        <td class="text-nowrap" th:text="${#temporals.format(m.fecha, 'dd/MM/yyyy HH:mm')}"></td>
+        <td><span th:replace="~{fragments :: tipoMov(${m})}"></span></td>
+        <td class="small" th:text="${m.descripcion}"></td>
+        <td class="text-end"><span th:replace="~{fragments :: dinero(${m.monto})}"></span></td>
+        <td class="text-end"><span th:replace="~{fragments :: dinero(${m.saldoResultante})}"></span></td>
+        <td><a class="small" th:href="@{/cajero/comprobante/{id}(id=${m.id})}">Comprobante</a></td>
+    </tr>
+    <tr th:if="${#lists.isEmpty(movimientos)}"><td colspan="6" class="text-center text-muted py-4">Sin movimientos todavia</td></tr>
+    </tbody>
+</table>
+</div></div>
+</main>
+<th:block th:replace="~{fragments :: scripts}"></th:block>
+</body>
+</html>

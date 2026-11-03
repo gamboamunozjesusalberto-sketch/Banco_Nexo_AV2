@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments :: head('Cronograma')}"></head>
+<body>
+<nav th:replace="~{fragments :: menu}"></nav>
+<div th:replace="~{fragments :: mensajes}"></div>
+<main class="container py-4">
+<a th:href="@{/cliente/creditos}" class="small">&larr; Mis creditos</a>
+<div class="d-flex justify-content-between align-items-end flex-wrap gap-2 mt-2 mb-3">
+    <div>
+        <h2 class="mb-0">Cronograma de pagos</h2>
+        <p class="text-muted mb-0" th:text="'Credito #' + ${s.id} + ' - ' + ${s.plazoMeses} + ' cuotas - tasa anual ' + ${s.tasaAnual} + '%'"></p>
+    </div>
+    <button class="btn btn-outline-primary no-imprimir" onclick="window.print()">Imprimir</button>
+</div>
+<div class="row g-3 mb-3">
+    <div class="col-md-4"><div class="card kpi"><div class="card-body"><div class="small text-muted">Monto desembolsado</div>
+        <div class="valor"><span th:replace="~{fragments :: dinero(${s.monto})}"></span></div>
+        <div class="small text-muted" th:text="'En la cuenta ' + ${s.cuentaDestinoNumero}"></div></div></div></div>
+    <div class="col-md-4"><div class="card kpi acento"><div class="card-body"><div class="small text-muted">Cuota mensual</div>
+        <div class="valor"><span th:replace="~{fragments :: dinero(${s.cuotaMensual})}"></span></div></div></div></div>
+    <div class="col-md-4"><div class="card kpi"><div class="card-body"><div class="small text-muted">Total a pagar</div>
+        <div class="valor"><span th:replace="~{fragments :: dinero(${s.totalAPagar})}"></span></div></div></div></div>
+</div>
+<div class="tabla-nexo"><div class="table-responsive">
+<table class="table table-sm align-middle">
+    <thead><tr><th>N.</th><th>Vence</th><th class="text-end">Cuota</th><th class="text-end">Interes</th><th class="text-end">Capital</th><th class="text-end">Saldo</th></tr></thead>
+    <tbody>
+    <tr th:each="c : ${s.cronograma}">
+        <td th:text="${c.numero}"></td>
+        <td th:text="${#temporals.format(c.fechaVencimiento, 'dd/MM/yyyy')}"></td>
+        <td class="text-end fw-semibold"><span th:replace="~{fragments :: dinero(${c.cuota})}"></span></td>
+        <td class="text-end"><span th:replace="~{fragments :: dinero(${c.interes})}"></span></td>
+        <td class="text-end"><span th:replace="~{fragments :: dinero(${c.amortizacion})}"></span></td>
+        <td class="text-end"><span th:replace="~{fragments :: dinero(${c.saldoPendiente})}"></span></td>
+    </tr>
+    </tbody>
+</table>
+</div></div>
+<p class="small text-muted mt-2">Referencial: en esta version el sistema no cobra las cuotas automaticamente.</p>
+</main>
+<th:block th:replace="~{fragments :: scripts}"></th:block>
+</body>
+</html>

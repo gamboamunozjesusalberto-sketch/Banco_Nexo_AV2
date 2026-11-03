@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments :: head('Registrar cliente')}"></head>
+<body>
+<nav th:replace="~{fragments :: menu}"></nav>
+<div th:replace="~{fragments :: mensajes}"></div>
+<main class="container py-4">
+<div class="mx-auto" style="max-width: 560px;">
+<h2 class="mb-3">Registrar cliente</h2>
+<div class="card"><div class="card-body p-4">
+<form th:action="@{/cajero/clientes}" th:object="${cliente}" method="post">
+    <div class="mb-3"><label class="form-label">Nombre completo</label>
+        <input type="text" class="form-control" th:field="*{nombre}" required></div>
+    <div class="row g-2 mb-3">
+        <div class="col-6"><label class="form-label">DNI (sera su usuario)</label>
+            <input type="text" class="form-control" th:field="*{dni}" maxlength="8" pattern="[0-9]{8}" required></div>
+        <div class="col-6"><label class="form-label">Telefono (opcional)</label>
+            <input type="text" class="form-control" th:field="*{telefono}" maxlength="9" pattern="[0-9]{9}"></div>
+    </div>
+    <div class="mb-3"><label class="form-label">Correo</label>
+        <input type="email" class="form-control" th:field="*{correo}" required></div>
+    <div class="mb-3"><label class="form-label">Clave temporal</label>
+        <input type="text" name="password" class="form-control" minlength="8" maxlength="60" autocomplete="off" required>
+        <div class="form-text">8 caracteres o mas, con letras y numeros. El cliente la cambiara en su primer ingreso.</div></div>
+    <button type="submit" class="btn btn-primary">Guardar</button>
+    <a class="btn btn-light" th:href="@{/cajero/clientes}">Cancelar</a>
+</form>
+</div></div>
+</div>
+</main>
+<th:block th:replace="~{fragments :: scripts}"></th:block>
+</body>
+</html>

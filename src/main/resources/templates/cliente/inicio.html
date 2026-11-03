@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments :: head('Mis cuentas')}"></head>
+<body>
+<nav th:replace="~{fragments :: menu}"></nav>
+<div th:replace="~{fragments :: mensajes}"></div>
+<main class="container py-4">
+<div class="d-flex justify-content-between align-items-end flex-wrap gap-2 mb-3">
+    <div>
+        <p class="text-muted mb-0">Hola,</p>
+        <h2 class="mb-0" th:text="${nombreUsuario}">cliente</h2>
+    </div>
+    <button type="button" class="btn btn-sm btn-light border" data-toggle-saldo></button>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-6" th:each="c : ${cuentas}">
+        <div class="card tarjeta-saldo h-100"><div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-start">
+                <div class="etiqueta" th:text="${c.tipo.name() == 'AHORROS'} ? 'Cuenta de ahorros' : 'Cuenta corriente'">Cuenta</div>
+                <button type="button" class="btn btn-sm btn-outline-light py-0" th:attr="data-copiar=${c.numero}"><svg class="ico"><use th:href="@{/img/iconos.svg#copiar}"></use></svg> Copiar</button>
+            </div>
+            <div class="fw-semibold mb-2" th:text="${c.numero}">NX-1</div>
+            <div class="etiqueta">Saldo disponible</div>
+            <div class="monto valor-saldo"><span th:replace="~{fragments :: dinero(${c.saldo})}"></span></div>
+            <div class="etiqueta mb-3">Limite por operacion: <span class="valor-saldo" th:text="'S/ ' + ${#numbers.formatDecimal(c.limiteOperacion, 1, 'COMMA', 2, 'POINT')}"></span></div>
+            <a class="btn btn-light btn-sm" th:href="@{/cliente/cuentas/{id}(id=${c.id})}">Movimientos</a>
+            <a class="btn btn-acento btn-sm" th:href="@{/cliente/transferir}">Transferir</a>
+        </div></div>
+    </div>
+    <div class="col-12" th:if="${#lists.isEmpty(cuentas)}">
+        <div class="card"><div class="card-body text-muted">Aun no tienes cuentas. Acercate a ventanilla para abrir una.</div></div>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-3"><a class="acceso" th:href="@{/cliente/transferir}"><span class="icono"><svg class="ico"><use th:href="@{/img/iconos.svg#transferir}"></use></svg></span>Transferir</a></div>
+    <div class="col-6 col-md-3"><a class="acceso" th:href="@{/cliente/pagos}"><span class="icono"><svg class="ico"><use th:href="@{/img/iconos.svg#servicio}"></use></svg></span>Pagar servicios</a></div>
+    <div class="col-6 col-md-3"><a class="acceso" th:href="@{/cliente/creditos}"><span class="icono"><svg class="ico"><use th:href="@{/img/iconos.svg#credito}"></use></svg></span>Creditos</a></div>
+    <div class="col-6 col-md-3"><a class="acceso" th:href="@{/cliente/notificaciones}"><span class="icono"><svg class="ico"><use th:href="@{/img/iconos.svg#campana}"></use></svg></span>Notificaciones</a></div>
+</div>
+
+<div class="card"><div class="card-body">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <h5 class="mb-0">Ultimos avisos</h5>
+        <a th:href="@{/cliente/notificaciones}" class="small">Ver todos</a>
+    </div>
+    <div th:each="n : ${avisos}" class="py-2 border-bottom">
+        <div class="d-flex justify-content-between">
+            <strong th:text="${n.titulo}"></strong>
+            <small class="text-muted" th:text="${#temporals.format(n.fecha, 'dd/MM HH:mm')}"></small>
+        </div>
+        <div class="text-muted small" th:text="${n.mensaje}"></div>
+    </div>
+    <p class="text-muted small mb-0" th:if="${#lists.isEmpty(avisos)}">No tienes avisos nuevos. Aqui te avisaremos cuando recibas dinero o cambie tu credito.</p>
+</div></div>
+</main>
+<th:block th:replace="~{fragments :: scripts}"></th:block>
+</body>
+</html>

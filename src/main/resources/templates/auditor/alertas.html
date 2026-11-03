@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments :: head('Alertas de riesgo')}"></head>
+<body>
+<nav th:replace="~{fragments :: menu}"></nav>
+<div th:replace="~{fragments :: mensajes}"></div>
+<main class="container py-4">
+<div class="d-flex justify-content-between align-items-end flex-wrap gap-2 mb-3">
+    <div><h2 class="mb-0">Alertas de riesgo</h2>
+        <p class="text-muted mb-0">Las genera el monitor de riesgo (patron <strong>Observer</strong>) en cuanto ocurre algo sospechoso, como hace Bank of America.</p></div>
+    <div class="d-flex gap-2 align-items-center">
+        <a class="btn btn-sm" th:classappend="${todas} ? 'btn-light' : 'btn-primary'" th:href="@{/auditor/alertas}">Pendientes</a>
+        <a class="btn btn-sm" th:classappend="${todas} ? 'btn-primary' : 'btn-light'" th:href="@{/auditor/alertas(todas=true)}">Todas</a>
+        <div class="btn-group">
+        <a class="btn btn-outline-primary btn-sm" th:href="@{/auditor/exportar(tipo='RIESGO',formato='csv')}"><svg class="ico"><use th:href="@{/img/iconos.svg#descargar}"></use></svg> CSV</a>
+        <a class="btn btn-outline-primary btn-sm" th:href="@{/auditor/exportar(tipo='RIESGO',formato='pdf')}"><svg class="ico"><use th:href="@{/img/iconos.svg#descargar}"></use></svg> PDF</a>
+    </div>
+    </div>
+</div>
+<div class="row g-3">
+    <div class="col-md-6 col-xl-4" th:each="a : ${lista}">
+        <div class="card h-100" th:classappend="${a.revisada} ? 'opacity-75' : ''"><div class="card-body">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+                <span class="badge estado" th:classappend="'nivel-' + ${a.nivel}" th:text="'Riesgo ' + ${a.nivel}"></span>
+                <small class="text-muted" th:text="${#temporals.format(a.fecha, 'dd/MM/yyyy HH:mm')}"></small>
+            </div>
+            <h6 class="mb-1 d-flex align-items-center gap-2"><svg class="ico text-nexo" th:if="${a.tipo.name() == 'MONTO_ALTO'}"><use th:href="@{/img/iconos.svg#credito}"></use></svg><svg class="ico text-nexo" th:if="${a.tipo.name() == 'INTENTOS_FALLIDOS'}"><use th:href="@{/img/iconos.svg#candado}"></use></svg><svg class="ico text-nexo" th:if="${a.tipo.name() == 'OPERACIONES_SEGUIDAS'}"><use th:href="@{/img/iconos.svg#rayo}"></use></svg>
+                <span th:text="${a.tipo.name() == 'MONTO_ALTO'} ? 'Monto alto' : (${a.tipo.name() == 'INTENTOS_FALLIDOS'} ? 'Intentos fallidos de ingreso' : 'Operaciones seguidas')"></span></h6>
+            <p class="small mb-1" th:text="${a.detalle}"></p>
+            <p class="small text-muted mb-2" th:text="'Referencia: ' + ${a.referencia}"></p>
+            <form th:unless="${a.revisada}" th:action="@{/auditor/alertas/{id}/revisar(id=${a.id})}" method="post">
+                <button type="submit" class="btn btn-sm btn-outline-primary">Marcar como revisada</button>
+            </form>
+            <span th:if="${a.revisada}" class="small text-nexo"><svg class="ico"><use th:href="@{/img/iconos.svg#check}"></use></svg> Revisada</span>
+        </div></div>
+    </div>
+    <div class="col-12" th:if="${#lists.isEmpty(lista)}">
+        <div class="card"><div class="card-body text-center text-muted py-5"><svg class="ico"><use th:href="@{/img/iconos.svg#check}"></use></svg> No hay alertas pendientes.</div></div>
+    </div>
+</div>
+</main>
+<th:block th:replace="~{fragments :: scripts}"></th:block>
+</body>
+</html>

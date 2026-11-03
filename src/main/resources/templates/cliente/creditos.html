@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments :: head('Creditos')}"></head>
+<body>
+<nav th:replace="~{fragments :: menu}"></nav>
+<div th:replace="~{fragments :: mensajes}"></div>
+<main class="container py-4">
+<h2 class="mb-1">Mis creditos</h2>
+<p class="text-muted">Simula tu cuota, elige en que cuenta quieres recibir el dinero y un asesor evaluara tu solicitud.</p>
+<div class="row g-4">
+    <div class="col-lg-5">
+        <div class="card"><div class="card-body p-4" id="simulador" th:attr="data-tasa=${tasa}">
+            <h5 class="mb-3">Solicitar un credito</h5>
+            <form th:action="@{/cliente/creditos}" method="post">
+                <div class="mb-3"><label class="form-label">¿Cuanto necesitas?</label>
+                    <div class="input-group"><span class="input-group-text">S/</span>
+                        <input type="number" id="simMonto" name="monto" class="form-control" min="1" step="0.01" value="5000" required></div></div>
+                <div class="mb-3"><label class="form-label d-flex justify-content-between">Plazo <strong><span id="simPlazoTxt">12</span> meses</strong></label>
+                    <input type="range" id="simPlazo" name="plazoMeses" class="form-range" min="1" max="60" value="12"
+                           oninput="document.getElementById('simPlazoTxt').textContent=this.value"></div>
+                <div class="aviso-seguridad mb-3">
+                    <div class="d-flex justify-content-between"><span>Cuota mensual aprox.</span><strong id="simCuota" class="fs-5">S/ 0.00</strong></div>
+                    <div class="d-flex justify-content-between small text-muted"><span>Total a pagar</span><span id="simTotal">S/ 0.00</span></div>
+                    <div class="small text-muted">Tasa anual: <span th:text="${tasa} + '%'">18%</span> &middot; cuota fija (sistema frances)</div>
+                </div>
+                <div class="mb-3"><label class="form-label">Recibir el dinero en</label>
+                    <select name="cuentaDestinoId" class="form-select" required>
+                        <option th:each="c : ${cuentas}" th:value="${c.id}" th:text="${c.numero} + ' (' + ${c.tipo} + ')'"></option>
+                    </select>
+                    <div class="form-text">Si te lo aprueban, el desembolso llega directo a esta cuenta.</div></div>
+                <div class="mb-3"><label class="form-label">Motivo</label>
+                    <input type="text" name="motivo" class="form-control" maxlength="200" placeholder="Ej. Capital de trabajo para mi negocio" required></div>
+                <button type="submit" class="btn btn-primary w-100" th:disabled="${#lists.isEmpty(cuentas)}">Enviar solicitud</button>
+                <p class="small text-danger mt-2 mb-0" th:if="${#lists.isEmpty(cuentas)}">Necesitas una cuenta para recibir el credito.</p>
+            </form>
+        </div></div>
+    </div>
+    <div class="col-lg-7">
+        <div class="card mb-3" th:each="s : ${solicitudes}"><div class="card-body">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <div class="fs-5 fw-bold"><span th:replace="~{fragments :: dinero(${s.monto})}"></span></div>
+                    <div class="small text-muted" th:text="${s.plazoMeses} + ' meses - solicitado el ' + ${#temporals.format(s.fechaSolicitud, 'dd/MM/yyyy')}"></div>
+                </div>
+                <span th:replace="~{fragments :: estadoCredito(${s})}"></span>
+            </div>
+            <div th:replace="~{fragments :: lineaEstados(${s})}"></div>
+            <div class="small" th:if="${s.cuotaMensual != null}">Cuota: <strong><span th:replace="~{fragments :: dinero(${s.cuotaMensual})}"></span></strong>
+                <span th:if="${s.cuentaDestinoNumero}" th:text="' - abono en ' + ${s.cuentaDestinoNumero}"></span></div>
+            <div class="small text-muted mt-1" th:if="${s.observaciones}" th:text="'Asesor: ' + ${s.observaciones}"></div>
+            <a class="btn btn-sm btn-outline-primary mt-2" th:if="${s.estado.name() == 'DESEMBOLSADA'}"
+               th:href="@{/cliente/creditos/{id}(id=${s.id})}">Ver cronograma de pagos</a>
+        </div></div>
+        <div class="card" th:if="${#lists.isEmpty(solicitudes)}"><div class="card-body text-center text-muted py-5">
+            Aun no has solicitado creditos. Usa el simulador para ver cuanto pagarias.</div></div>
+    </div>
+</div>
+</main>
+<th:block th:replace="~{fragments :: scripts}"></th:block>
+</body>
+</html>

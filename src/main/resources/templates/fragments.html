@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:fragment="head(titulo)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0B7A4B">
+    <title th:text="${titulo} + ' | Banco NEXO'">Banco NEXO</title>
+    <link rel="icon" type="image/png" th:href="@{/img/favicon.png}">
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/nexo.css}">
+</head>
+<body>
+
+<!-- ===================== Barra superior (cambia segun el rol) ===================== -->
+<nav th:fragment="menu" class="navbar navbar-expand-lg navbar-dark nexo-nav sticky-top">
+    <div class="container">
+        <a class="navbar-brand" th:href="@{/}">
+            <img th:src="@{/img/logo-nexo-blanco.png}" alt="Logo Banco NEXO">
+            <span>Banco NEXO</span>
+        </a>
+        <div class="d-flex align-items-center order-lg-last gap-2">
+            <a sec:authorize="hasRole('CLIENTE')" class="campana" th:href="@{/cliente/notificaciones}" title="Notificaciones">
+                <svg class="ico"><use th:href="@{/img/iconos.svg#campana}"></use></svg><span class="contador" th:if="${contadorMenu != null and contadorMenu > 0}" th:text="${contadorMenu}">0</span>
+            </a>
+            <a sec:authorize="hasRole('AUDITOR')" class="campana" th:href="@{/auditor/alertas}" title="Alertas pendientes">
+                <svg class="ico"><use th:href="@{/img/iconos.svg#alerta}"></use></svg><span class="contador" th:if="${contadorMenu != null and contadorMenu > 0}" th:text="${contadorMenu}">0</span>
+            </a>
+            <div class="dropdown" sec:authorize="isAuthenticated()">
+                <button class="chip-usuario border-0 dropdown-toggle" data-bs-toggle="dropdown" sec:authentication="name">usuario</button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" th:href="@{/perfil/clave}">Cambiar mi clave</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><form th:action="@{/logout}" method="post"><button class="dropdown-item text-danger" type="submit">Cerrar sesion</button></form></li>
+                </ul>
+            </div>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuNexo" aria-label="Menu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+        <div class="collapse navbar-collapse" id="menuNexo">
+            <div class="navbar-nav me-auto ms-lg-3" sec:authorize="hasRole('CAJERO')">
+                <a class="nav-link" th:href="@{/cajero}">Inicio</a>
+                <a class="nav-link" th:href="@{/cajero/clientes}">Clientes</a>
+                <a class="nav-link" th:href="@{/cajero/cuentas}">Cuentas</a>
+                <a class="nav-link" th:href="@{/cajero/operaciones}">Depositos y retiros</a>
+            </div>
+            <div class="navbar-nav me-auto ms-lg-3" sec:authorize="hasRole('CLIENTE')">
+                <a class="nav-link" th:href="@{/cliente}">Mis cuentas</a>
+                <a class="nav-link" th:href="@{/cliente/transferir}">Transferir</a>
+                <a class="nav-link" th:href="@{/cliente/pagos}">Pagar servicios</a>
+                <a class="nav-link" th:href="@{/cliente/creditos}">Creditos</a>
+            </div>
+            <div class="navbar-nav me-auto ms-lg-3" sec:authorize="hasRole('ASESOR')">
+                <a class="nav-link" th:href="@{/asesor}">Solicitudes</a>
+                <a class="nav-link" th:href="@{/asesor/clientes}">Clientes</a>
+            </div>
+            <div class="navbar-nav me-auto ms-lg-3" sec:authorize="hasRole('AUDITOR')">
+                <a class="nav-link" th:href="@{/auditor/alertas}">Alertas de riesgo</a>
+                <a class="nav-link" th:href="@{/auditor/transacciones}">Transacciones</a>
+                <a class="nav-link" th:href="@{/auditor/bitacora}">Bitacora</a>
+            </div>
+            <div class="navbar-nav me-auto ms-lg-3" sec:authorize="hasRole('ADMINISTRADOR')">
+                <a class="nav-link" th:href="@{/admin/reportes}">Reportes</a>
+                <a class="nav-link" th:href="@{/admin/usuarios}">Usuarios y roles</a>
+                <a class="nav-link" th:href="@{/admin/parametros}">Parametros</a>
+                <a class="nav-link" th:href="@{/admin/operaciones}">Auditar operaciones</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- ===================== Mensajes como toasts ===================== -->
+<div th:fragment="mensajes" class="zona-toasts">
+    <div class="toast toast-nexo" role="alert" th:if="${ok}">
+        <div class="toast-body d-flex justify-content-between align-items-start gap-2">
+            <span><strong class="text-nexo">Listo.</strong> <span th:text="${ok}"></span></span>
+            <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+        </div>
+    </div>
+    <div class="toast toast-nexo error" role="alert" th:if="${error}">
+        <div class="toast-body d-flex justify-content-between align-items-start gap-2">
+            <span><strong class="text-danger">Atencion.</strong> <span th:text="${error}"></span></span>
+            <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+        </div>
+    </div>
+</div>
+
+<!-- ===================== Scripts comunes ===================== -->
+<th:block th:fragment="scripts">
+    <script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/js/nexo.js}"></script>
+</th:block>
+
+<!-- Ventana de confirmacion para formularios con data-confirmar -->
+<div th:fragment="modalConfirmar" class="modal fade" id="modalConfirmar" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+        <div class="modal-header border-0"><h5 class="modal-title">Revisa antes de confirmar</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+        <div class="modal-body"><div class="resumen"></div>
+            <p class="text-muted small mt-3 mb-0">Una vez confirmada, la operacion se registra y no se puede deshacer desde tu banca.</p></div>
+        <div class="modal-footer border-0">
+            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Corregir</button>
+            <button type="button" class="btn btn-primary btn-confirmar">Confirmar</button>
+        </div>
+    </div></div>
+</div>
+
+
+<span th:fragment="dinero(v)" th:text="'S/ ' + ${#numbers.formatDecimal(v, 1, 'COMMA', 2, 'POINT')}">S/ 0.00</span>
+
+<span th:fragment="tipoMov(m)" class="badge" th:classappend="${m.ingreso} ? 'ingreso' : 'egreso'"
+      th:text="${m.tipo.nombre}">Tipo</span>
+
+<span th:fragment="estadoCredito(s)" class="estado" th:classappend="'estado-' + ${s.estado.name()}"
+      th:text="${s.estado.nombre}">Estado</span>
+
+<!-- Patron State: los pasos por los que pasa una solicitud de credito -->
+<div th:fragment="lineaEstados(s)" class="linea-estados"
+     th:with="orden=${s.estado.name() == 'PENDIENTE' ? 1 : (s.estado.name() == 'EN_EVALUACION' ? 2 : (s.estado.name() == 'RECHAZADA' ? 3 : (s.estado.name() == 'APROBADA' ? 3 : 4)))},
+              rechazada=${s.estado.name() == 'RECHAZADA'}">
+    <div class="paso" th:classappend="${orden == 1} ? 'hecho actual' : 'hecho'">Pendiente</div>
+    <div class="paso" th:classappend="${orden == 2} ? 'hecho actual' : (${orden > 2} ? 'hecho' : '')">En evaluacion</div>
+    <div class="paso" th:classappend="${rechazada} ? 'rechazo actual' : (${orden == 3} ? 'hecho actual' : (${orden > 3} ? 'hecho' : ''))"
+         th:text="${rechazada} ? 'Rechazada' : 'Aprobada'">Aprobada</div>
+    <div class="paso" th:unless="${rechazada}" th:classappend="${orden == 4} ? 'hecho actual' : ''">Desembolsada</div>
+</div>
+</body>
+</html>

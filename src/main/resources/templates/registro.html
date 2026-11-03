@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Abre tu cuenta')}"></head>
+<body>
+<div th:replace="~{fragments :: mensajes}"></div>
+<div class="pantalla-acceso">
+    <section class="panel-marca">
+        <div class="d-flex align-items-center gap-2">
+            <img th:src="@{/img/logo-nexo-blanco.png}" alt="Logo Banco NEXO" style="height:40px">
+            <strong class="fs-4">Banco NEXO</strong>
+        </div>
+        <div>
+            <h1>Tu banco, conectado contigo<span class="punto">.</span></h1>
+            <p class="oculto-movil mt-3" style="max-width:420px;opacity:.85">Cuentas, transferencias, pago de servicios y creditos
+                en un solo lugar, con alertas de seguridad y confirmacion de montos altos.</p>
+        </div>
+    </section>
+    <section class="panel-form"><div class="caja">
+        <h2 class="mb-1">Abre tu cuenta NEXO</h2>
+        <p class="text-muted mb-4">En un minuto y sin ir a una agencia. Te abrimos una cuenta de ahorros en soles.</p>
+        <div class="alert alert-danger py-2" th:if="${error}" th:text="${error}"></div>
+        <form th:action="@{/registro}" th:object="${cliente}" method="post">
+            <div class="mb-2"><label class="form-label">Nombre completo</label>
+                <input type="text" class="form-control" th:field="*{nombre}" maxlength="100" required></div>
+            <div class="row g-2 mb-2">
+                <div class="col-6"><label class="form-label">DNI</label>
+                    <input type="text" class="form-control" th:field="*{dni}" maxlength="8" pattern="[0-9]{8}" inputmode="numeric" title="8 digitos" required></div>
+                <div class="col-6"><label class="form-label">Celular <span class="text-muted small">(opcional)</span></label>
+                    <input type="text" class="form-control" th:field="*{telefono}" maxlength="9" pattern="[0-9]{9}" inputmode="numeric" title="9 digitos"></div>
+            </div>
+            <div class="mb-2"><label class="form-label">Correo</label>
+                <input type="email" class="form-control" th:field="*{correo}" maxlength="100" required></div>
+            <div class="mb-2"><label class="form-label">Crea tu clave</label>
+                <div class="input-group">
+                    <input type="password" id="clave" name="password" class="form-control" minlength="8" maxlength="60" data-medidor="#medidor" autocomplete="new-password" required>
+                    <button class="btn btn-outline-secondary" type="button" data-ver-clave="#clave"><svg class="ico"><use th:href="@{/img/iconos.svg#ojo}"></use></svg></button>
+                </div>
+                <div class="medidor-clave mt-1" id="medidor"><span></span></div>
+                <div class="d-flex justify-content-between"><small class="text-muted">Minimo 8 caracteres, con letras y numeros.</small>
+                    <small id="medidor-texto" class="fw-bold"></small></div>
+            </div>
+            <div class="mb-3"><label class="form-label">Repite tu clave</label>
+                <input type="password" name="confirmacion" class="form-control" minlength="8" maxlength="60" autocomplete="new-password" required></div>
+            <button type="submit" class="btn btn-primary btn-lg w-100">Crear mi cuenta</button>
+        </form>
+        <p class="text-center mt-3"><a th:href="@{/login}">Ya tengo cuenta, quiero ingresar</a></p>
+    </div></section>
+</div>
+<th:block th:replace="~{fragments :: scripts}"></th:block>
+</body>
+</html>

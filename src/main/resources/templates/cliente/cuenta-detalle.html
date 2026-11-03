@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments :: head('Detalle de cuenta')}"></head>
+<body>
+<nav th:replace="~{fragments :: menu}"></nav>
+<div th:replace="~{fragments :: mensajes}"></div>
+<main class="container py-4">
+<a th:href="@{/cliente}" class="small">&larr; Mis cuentas</a>
+<div class="row g-3 mt-1 mb-4">
+    <div class="col-lg-7">
+        <div class="card tarjeta-saldo h-100"><div class="card-body p-4">
+            <div class="d-flex justify-content-between">
+                <div class="etiqueta" th:text="${cuenta.tipo.name() == 'AHORROS'} ? 'Cuenta de ahorros' : 'Cuenta corriente'"></div>
+                <button type="button" class="btn btn-sm btn-outline-light py-0" data-toggle-saldo></button>
+            </div>
+            <div class="fw-semibold mb-3" th:text="${cuenta.numero}"></div>
+            <div class="etiqueta">Saldo</div>
+            <div class="monto valor-saldo"><span th:replace="~{fragments :: dinero(${cuenta.saldo})}"></span></div>
+            <div class="etiqueta">Disponible para retirar: <span class="valor-saldo" th:text="'S/ ' + ${#numbers.formatDecimal(cuenta.saldoDisponible, 1, 'COMMA', 2, 'POINT')}"></span></div>
+        </div></div>
+    </div>
+    <div class="col-lg-5">
+        <div class="card h-100"><div class="card-body">
+            <h6 class="mb-1"><svg class="ico"><use th:href="@{/img/iconos.svg#escudo}"></use></svg> Limite por operacion</h6>
+            <p class="small text-muted">Lo maximo que se puede mover en una sola transferencia o pago. Si sales a la calle, bajalo:
+                si te roban el celular, nadie podra sacar mas de ese monto (idea del "Modo Calle" de Interbank).</p>
+            <form th:action="@{/cliente/cuentas/{id}/limite(id=${cuenta.id})}" method="post" class="d-flex gap-2">
+                <div class="input-group">
+                    <span class="input-group-text">S/</span>
+                    <input type="number" name="limite" class="form-control" min="1" max="50000" step="0.01" th:value="${cuenta.limiteOperacion}" required>
+                </div>
+                <button class="btn btn-primary" type="submit">Guardar</button>
+            </form>
+            <div class="d-flex gap-2 mt-2">
+                <button type="button" class="btn btn-sm btn-outline-primary" onclick="this.form;document.querySelector('[name=limite]').value=200">Modo calle (S/ 200)</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="document.querySelector('[name=limite]').value=5000">Normal (S/ 5,000)</button>
+            </div>
+        </div></div>
+    </div>
+</div>
+<div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+    <h5 class="mb-0">Movimientos</h5>
+    <input type="search" class="form-control form-control-sm" style="max-width:240px" placeholder="Buscar movimiento..." data-filtrar="#tablaMov">
+</div>
+<div class="tabla-nexo"><div class="table-responsive">
+<table class="table align-middle" id="tablaMov">
+    <thead><tr><th>Fecha</th><th>Tipo</th><th>Descripcion</th><th class="text-end">Monto</th><th class="text-end">Saldo</th></tr></thead>
+    <tbody>
+    <tr th:each="m : ${movimientos}">
+        <td class="text-nowrap" th:text="${#temporals.format(m.fecha, 'dd/MM/yyyy HH:mm')}"></td>
+        <td><span th:replace="~{fragments :: tipoMov(${m})}"></span></td>
+        <td class="small" th:text="${m.descripcion}"></td>
+        <td class="text-end text-nowrap fw-semibold" th:classappend="${m.ingreso} ? 'text-nexo' : 'text-danger'">
+            <span th:text="${m.ingreso} ? '+ ' : '- '"></span><span th:replace="~{fragments :: dinero(${m.monto})}"></span></td>
+        <td class="text-end text-nowrap valor-saldo"><span th:replace="~{fragments :: dinero(${m.saldoResultante})}"></span></td>
+    </tr>
+    <tr th:if="${#lists.isEmpty(movimientos)}"><td colspan="5" class="text-center text-muted py-4">Sin movimientos todavia</td></tr>
+    </tbody>
+</table>
+</div></div>
+</main>
+<th:block th:replace="~{fragments :: scripts}"></th:block>
+</body>
+</html>

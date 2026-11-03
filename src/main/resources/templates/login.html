@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Ingresar')}"></head>
+<body>
+<div th:replace="~{fragments :: mensajes}"></div>
+<div class="pantalla-acceso">
+    <section class="panel-marca">
+        <div class="d-flex align-items-center gap-2">
+            <img th:src="@{/img/logo-nexo-blanco.png}" alt="Logo Banco NEXO" style="height:40px">
+            <strong class="fs-4">Banco NEXO</strong>
+        </div>
+        <div>
+            <h1>Tu banco, conectado contigo<span class="punto">.</span></h1>
+            <p class="oculto-movil mt-3" style="max-width:420px;opacity:.85">Cuentas, transferencias, pago de servicios y creditos
+                en un solo lugar, con alertas de seguridad y confirmacion de montos altos.</p>
+        </div>
+    </section>
+    <section class="panel-form"><div class="caja">
+        <h2 class="mb-1">Bienvenido</h2>
+        <p class="text-muted mb-4">Ingresa a tu Banca por Internet</p>
+        <div class="alert alert-danger py-2" th:if="${param.error}">Usuario o clave incorrectos, o el usuario esta desactivado.</div>
+        <div class="alert alert-warning py-2" th:if="${param.bloqueado}">Tu usuario esta <strong>bloqueado temporalmente</strong> por varios
+            intentos fallidos. Espera unos minutos o pide ayuda en ventanilla.</div>
+        <div class="alert alert-success py-2" th:if="${param.logout}">Cerraste sesion de forma segura.</div>
+        <div class="alert alert-success py-2" th:if="${param.registrado}"><svg class="ico"><use th:href="@{/img/iconos.svg#check}"></use></svg> Registro exitoso. Ya tienes tu cuenta de ahorros: ingresa con tu DNI y tu clave.</div>
+        <form th:action="@{/login}" method="post">
+            <div class="mb-3">
+                <label class="form-label" for="username">DNI o usuario</label>
+                <input type="text" id="username" name="username" class="form-control form-control-lg" autocomplete="username" autofocus required>
+            </div>
+            <div class="mb-2">
+                <label class="form-label" for="password">Clave</label>
+                <div class="input-group">
+                    <input type="password" id="password" name="password" class="form-control form-control-lg" autocomplete="current-password" required>
+                    <button class="btn btn-outline-secondary" type="button" data-ver-clave="#password" title="Ver clave"><svg class="ico"><use th:href="@{/img/iconos.svg#ojo}"></use></svg></button>
+                </div>
+            </div>
+            <p class="small text-muted mb-4">Por tu seguridad, despues de varios intentos fallidos tu usuario se bloquea unos minutos.</p>
+            <button type="submit" class="btn btn-primary btn-lg w-100">Ingresar</button>
+        </form>
+        <hr class="my-4">
+        <p class="text-center mb-1">¿Aun no eres cliente? <a th:href="@{/registro}" class="fw-bold">Abre tu cuenta en linea</a></p>
+        <p class="text-center small text-muted">¿Olvidaste tu clave? Acercate a ventanilla con tu DNI: el cajero te dara una clave temporal.</p>
+    </div></section>
+</div>
+<th:block th:replace="~{fragments :: scripts}"></th:block>
+</body>
+</html>

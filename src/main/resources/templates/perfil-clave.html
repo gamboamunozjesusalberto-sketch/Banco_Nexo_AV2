@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments :: head('Cambiar clave')}"></head>
+<body>
+<nav th:replace="~{fragments :: menu}"></nav>
+<div th:replace="~{fragments :: mensajes}"></div>
+<main class="container py-4">
+<div class="mx-auto" style="max-width: 460px;">
+    <div class="card"><div class="card-body p-4">
+        <h3 class="mb-1">Cambiar mi clave</h3>
+        <div class="aviso-seguridad my-3" th:if="${temporal}">
+            <strong>Tu clave actual es temporal.</strong> Te la dio otra persona del banco, asi que antes de continuar
+            crea una nueva que solo tu conozcas.
+        </div>
+        <p class="text-muted" th:unless="${temporal}">Te recomendamos cambiarla cada cierto tiempo.</p>
+        <form th:action="@{/perfil/clave}" method="post">
+            <div class="mb-3"><label class="form-label">Clave actual</label>
+                <input type="password" name="actual" class="form-control" autocomplete="current-password" required></div>
+            <div class="mb-2"><label class="form-label">Nueva clave</label>
+                <div class="input-group">
+                    <input type="password" id="nueva" name="nueva" class="form-control" minlength="8" maxlength="60" data-medidor="#medidor" autocomplete="new-password" required>
+                    <button class="btn btn-outline-secondary" type="button" data-ver-clave="#nueva"><svg class="ico"><use th:href="@{/img/iconos.svg#ojo}"></use></svg></button>
+                </div>
+                <div class="medidor-clave mt-1" id="medidor"><span></span></div>
+                <div class="d-flex justify-content-between"><small class="text-muted">8 caracteres o mas, con letras y numeros.</small>
+                    <small id="medidor-texto" class="fw-bold"></small></div>
+            </div>
+            <div class="mb-4"><label class="form-label">Repite la nueva clave</label>
+                <input type="password" name="confirmacion" class="form-control" minlength="8" maxlength="60" autocomplete="new-password" required></div>
+            <button type="submit" class="btn btn-primary w-100">Guardar nueva clave</button>
+        </form>
+    </div></div>
+</div>
+</main>
+<th:block th:replace="~{fragments :: scripts}"></th:block>
+</body>
+</html>

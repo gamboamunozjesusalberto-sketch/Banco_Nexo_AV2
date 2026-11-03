@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments :: head('Transacciones')}"></head>
+<body>
+<nav th:replace="~{fragments :: menu}"></nav>
+<div th:replace="~{fragments :: mensajes}"></div>
+<main class="container py-4">
+<div class="d-flex justify-content-between align-items-end flex-wrap gap-2 mb-3">
+    <div><h2 class="mb-0">Transacciones</h2><p class="text-muted mb-0">Ultimas 300 operaciones de todo el banco.</p></div>
+    <div class="btn-group">
+        <a class="btn btn-outline-primary btn-sm" th:href="@{/auditor/exportar(tipo='TRANSACCIONES',formato='csv')}"><svg class="ico"><use th:href="@{/img/iconos.svg#descargar}"></use></svg> CSV</a>
+        <a class="btn btn-outline-primary btn-sm" th:href="@{/auditor/exportar(tipo='TRANSACCIONES',formato='pdf')}"><svg class="ico"><use th:href="@{/img/iconos.svg#descargar}"></use></svg> PDF</a>
+    </div>
+</div>
+<form class="d-flex gap-2 mb-3 flex-wrap" th:action="@{/auditor/transacciones}" method="get">
+    <select name="tipo" class="form-select" style="max-width:260px" onchange="this.form.submit()">
+        <option value="">Todos los tipos</option>
+        <option th:each="t : ${tipos}" th:value="${t}" th:text="${t.nombre}" th:selected="${t == tipoSeleccionado}"></option>
+    </select>
+    <input type="search" class="form-control" style="max-width:260px" placeholder="Buscar en la tabla..." data-filtrar="#tablaTx">
+</form>
+<div class="tabla-nexo"><div class="table-responsive">
+<table class="table table-sm align-middle" id="tablaTx">
+    <thead><tr><th>Comprobante</th><th>Fecha</th><th>Cuenta</th><th>Cliente</th><th>Tipo</th><th class="text-end">Monto</th><th>Descripcion</th></tr></thead>
+    <tbody>
+    <tr th:each="t : ${transacciones}">
+        <td class="small" th:text="${t.numeroComprobante}"></td>
+        <td class="small text-nowrap" th:text="${#temporals.format(t.fecha, 'dd/MM/yyyy HH:mm')}"></td>
+        <td class="small" th:text="${t.cuentaNumero}"></td>
+        <td class="small" th:text="${t.clienteNombre}"></td>
+        <td><span th:replace="~{fragments :: tipoMov(${t})}"></span></td>
+        <td class="text-end"><span th:replace="~{fragments :: dinero(${t.monto})}"></span></td>
+        <td class="small" th:text="${t.descripcion}"></td>
+    </tr>
+    <tr th:if="${#lists.isEmpty(transacciones)}"><td colspan="7" class="text-center text-muted py-4">Sin registros</td></tr>
+    </tbody>
+</table>
+</div></div>
+</main>
+<th:block th:replace="~{fragments :: scripts}"></th:block>
+</body>
+</html>

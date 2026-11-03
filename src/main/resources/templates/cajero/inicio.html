@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments :: head('Ventanilla')}"></head>
+<body>
+<nav th:replace="~{fragments :: menu}"></nav>
+<div th:replace="~{fragments :: mensajes}"></div>
+<main class="container py-4">
+<h2 class="mb-1">Ventanilla</h2>
+<p class="text-muted mb-4">Atencion al cliente en caja. Cada deposito o retiro se guarda como un comando que el administrador puede extornar.</p>
+<div class="row g-3">
+    <div class="col-6 col-md-4"><a class="acceso h-100" th:href="@{/cajero/clientes/nuevo}"><span class="icono"><svg class="ico"><use th:href="@{/img/iconos.svg#usuario}"></use></svg></span>Registrar cliente</a></div>
+    <div class="col-6 col-md-4"><a class="acceso h-100" th:href="@{/cajero/cuentas/nueva}"><span class="icono"><svg class="ico"><use th:href="@{/img/iconos.svg#tarjeta}"></use></svg></span>Abrir cuenta</a></div>
+    <div class="col-6 col-md-4"><a class="acceso h-100" th:href="@{/cajero/operaciones}"><span class="icono"><svg class="ico"><use th:href="@{/img/iconos.svg#billete}"></use></svg></span>Deposito o retiro</a></div>
+    <div class="col-6 col-md-4"><a class="acceso h-100" th:href="@{/cajero/clientes}"><span class="icono"><svg class="ico"><use th:href="@{/img/iconos.svg#buscar}"></use></svg></span>Clientes y claves</a></div>
+    <div class="col-6 col-md-4"><a class="acceso h-100" th:href="@{/cajero/cuentas}"><span class="icono"><svg class="ico"><use th:href="@{/img/iconos.svg#grafico}"></use></svg></span>Consultar cuentas</a></div>
+</div>
+</main>
+<th:block th:replace="~{fragments :: scripts}"></th:block>
+</body>
+</html>

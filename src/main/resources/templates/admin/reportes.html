@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments :: head('Reportes globales')}"></head>
+<body>
+<nav th:replace="~{fragments :: menu}"></nav>
+<div th:replace="~{fragments :: mensajes}"></div>
+<main class="container py-4">
+<div class="d-flex justify-content-between align-items-end flex-wrap gap-2 mb-3">
+    <div><h2 class="mb-0">Reportes globales</h2>
+        <p class="text-muted mb-0">Vista general del banco (como el panel de gestion de BBVA para su red de oficinas).</p></div>
+    <div class="btn-group">
+        <a class="btn btn-outline-primary btn-sm" th:href="@{/admin/reportes/exportar(formato='csv')}"><svg class="ico"><use th:href="@{/img/iconos.svg#descargar}"></use></svg> CSV</a>
+        <a class="btn btn-outline-primary btn-sm" th:href="@{/admin/reportes/exportar(formato='pdf')}"><svg class="ico"><use th:href="@{/img/iconos.svg#descargar}"></use></svg> PDF</a>
+    </div>
+</div>
+<div class="row g-3 mb-4">
+    <div class="col-6 col-lg-3"><div class="card kpi h-100"><div class="card-body"><div class="small text-muted">Dinero movido</div>
+        <div class="valor"><span th:replace="~{fragments :: dinero(${montoTotal})}"></span></div></div></div></div>
+    <div class="col-6 col-lg-3"><div class="card kpi acento h-100"><div class="card-body"><div class="small text-muted">Operaciones</div>
+        <div class="valor" th:text="${cantidadTotal}">0</div></div></div></div>
+    <div class="col-6 col-lg-3"><div class="card kpi h-100"><div class="card-body"><div class="small text-muted">Usuarios</div>
+        <div class="valor" th:text="${usuarios}">0</div></div></div></div>
+    <div class="col-6 col-lg-3"><div class="card kpi peligro h-100"><div class="card-body"><div class="small text-muted">Alertas sin revisar</div>
+        <div class="valor" th:text="${alertas}">0</div></div></div></div>
+</div>
+<div class="row g-4">
+    <div class="col-lg-7">
+        <div class="card h-100"><div class="card-body">
+            <h5>Monto movido en los ultimos 7 dias</h5>
+            <div class="columnas">
+                <div class="col-dia" th:each="d : ${porDia}" th:title="${d[1]} + ' operaciones - S/ ' + ${#numbers.formatDecimal(d[2], 1, 'COMMA', 2, 'POINT')}">
+                    <small class="fw-semibold text-nexo mb-1" th:text="${#numbers.formatDecimal(d[2], 1, 'COMMA', 0, 'POINT')}"></small>
+                    <div class="pilar" th:attr="data-alto=${d[2] * 100 / maximoDia}"></div>
+                    <small th:text="${d[0]}"></small>
+                </div>
+                <p class="text-muted align-self-center" th:if="${#lists.isEmpty(porDia)}">Sin movimientos en los ultimos dias.</p>
+            </div>
+        </div></div>
+    </div>
+    <div class="col-lg-5">
+        <div class="card h-100"><div class="card-body">
+            <h5>Por tipo de operacion</h5>
+            <div class="mb-3" th:each="f : ${porTipo}">
+                <div class="d-flex justify-content-between small mb-1">
+                    <span th:text="${T(com.banco.model.TipoTransaccion).valueOf(f[0]).nombre} + ' (' + ${f[1]} + ')'"></span>
+                    <strong th:text="'S/ ' + ${#numbers.formatDecimal(f[2], 1, 'COMMA', 2, 'POINT')}"></strong>
+                </div>
+                <div class="barra"><span th:attr="data-ancho=${f[2] * 100 / maximoTipo}"></span></div>
+            </div>
+            <p class="text-muted" th:if="${#lists.isEmpty(porTipo)}">Todavia no hay operaciones.</p>
+        </div></div>
+    </div>
+    <div class="col-12">
+        <div class="card"><div class="card-body">
+            <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+                <div><h5 class="mb-0">NEXO Recaudacion</h5></div>
+                <div class="fs-4 fw-bold text-nexo"><span th:replace="~{fragments :: dinero(${recaudado})}"></span></div>
+            </div>
+            <div class="row g-2 mt-2">
+                <div class="col-6 col-md" th:each="f : ${porServicio}">
+                    <div class="border rounded-3 p-2 h-100">
+                        <div class="small text-muted" th:text="${f[0]} + ' (' + ${f[1]} + ' pagos)'"></div>
+                        <div class="fw-bold" th:text="'S/ ' + ${#numbers.formatDecimal(f[2], 1, 'COMMA', 2, 'POINT')}"></div>
+                    </div>
+                </div>
+                <div class="col-12 small text-muted" th:if="${#lists.isEmpty(porServicio)}">Aun no se pagaron servicios.</div>
+            </div>
+        </div></div>
+    </div>
+</div>
+</main>
+<th:block th:replace="~{fragments :: scripts}"></th:block>
+</body>
+</html>

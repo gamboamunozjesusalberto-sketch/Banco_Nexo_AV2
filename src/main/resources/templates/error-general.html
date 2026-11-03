@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments :: head('Aviso')}"></head>
+<body>
+<nav th:replace="~{fragments :: menu}"></nav>
+<div th:replace="~{fragments :: mensajes}"></div>
+<main class="container py-4">
+<div class="text-center py-5 mx-auto" style="max-width:560px">
+    <div class="icono-grande peligro mb-3"><svg class="ico"><use th:href="@{/img/iconos.svg#alerta}"></use></svg></div>
+    <h2>No se pudo completar la accion</h2>
+    <p class="text-muted" th:text="${mensaje}">Mensaje</p>
+    <a class="btn btn-primary" th:href="@{/}">Volver al inicio</a>
+</div>
+</main>
+<th:block th:replace="~{fragments :: scripts}"></th:block>
+</body>
+</html>
